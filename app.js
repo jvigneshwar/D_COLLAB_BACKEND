@@ -14,7 +14,11 @@ app.use(express.json());
 
 mongoose.set("strictQuery",true)
 mongoose.connect("mongodb+srv://cg:ASas12.,@cluster0.0bv09xe.mongodb.net/?retryWrites=true&w=majority")
-    .then(()=>console.log("db connected"))
+    .then(()=>{
+        app.listen(4000, () => {
+            console.log("listerning to port 4000");
+        });
+    })
     .catch(e=>console.log("db not connected\n" + e.message));
     
     const storage = multer.diskStorage({
@@ -252,6 +256,4 @@ app.use((req,res) => {
     res.send("<center><h1>404 Not Found</h1></center>");
 })
 
-app.listen(1337 , "localhost" , () => {
-    console.log("connected");
-});
+
