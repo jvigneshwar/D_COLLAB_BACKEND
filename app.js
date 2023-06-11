@@ -32,6 +32,12 @@ mongoose.connect("mongodb+srv://cg:ASas12.,@cluster0.0bv09xe.mongodb.net/?retryW
 
 // -----------------------------------------------------------------------------------------
 
+app.get("/",(req,res)=>{
+    res.send("connected");
+})
+
+// -----------------------------------------------------------------------------------------
+
 app.post("/api/register",async (req,res) => {
     try{
         const user = await User.create({
