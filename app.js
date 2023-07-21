@@ -225,7 +225,7 @@ app.post("/postRating", async (req, res) => {
 
 app.get("/profileView/:userId", async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId, { "username": 1, "userimg": 1, "posts": 1 }).populate('posts', 'imageName')
+        const user = await User.findById(req.params.userId, { "username": 1, "userimg": 1, "posts": 1 }).populate('posts', 'imageUrl')
         res.json({ status: "ok", user })
     }
     catch (err) {
