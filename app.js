@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const Post = require("./models/postSchema");
 const Suggest = require("./models/suggestSchema");
 const cloudinary = require("cloudinary");
+const { log } = require("console");
 
 const app = express();
 app.use(cors());
@@ -244,6 +245,30 @@ app.get("/api/loogedin", async (req, res) => {
     }
     catch (err) {
         res.json({ status: "failed" });
+    }
+})
+
+app.delete("/api/deletepost/:id/:username", async (req, res) => {
+    let { id, username } = req.params
+    try {
+        let curPost = await Post.findById(id)
+        let curUser = await User.findById(curPost.author)
+        let index = curUser.posts.indexOf(id);
+        if (index !== -1) {
+            curUser.posts.splice(index, 1);
+        }
+        let imgId = curPost.imageName;
+        for (let i = 0; i < curPost.Suggestions.length; i++) {
+            await Suggest.findByIdAndDelete(curPost.Suggestions[i])
+        }
+        await cloudinary.v2.uploader.destroy(imgId);
+        await Post.findByIdAndDelete(id);
+        curUser.save();
+        res.json({ status: "okd" })
+    }
+    catch (err) {
+        console.log(err);
+        res.json({ status: "failed" })
     }
 })
 
