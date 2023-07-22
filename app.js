@@ -83,11 +83,28 @@ app.get("/api/home", async (req, res) => {
     const token = req.headers['x-access-token'];
     try {
         const decode = jwt.verify(token, 'ASas12.,')
-        const posts = await Post.find({}, '_id imageName imageUrl author').populate('author', 'userimg');
-        const user = await User.find({}, { "username": 1, "userimg": 1 })
-        res.json({ status: "ok", posts, user });
+        const count = await Post.count();
+        const posts = await Post.find({}, '_id imageName imageUrl author').populate('author', 'userimg').sort({ _id: -1 }).limit(10);
+        const user =  await User.find({}, { "username": 1, "userimg": 1 }).sort({ _id: -1 }).limit(7);
+        res.json({ status: "ok", posts, user, count });
     }
     catch (err) {
+        console.log("home err" + err);
+        res.json({ status: "failed" });
+    }
+})
+
+// -----------------------------------------------------------------------------------------
+
+app.get("/api/nextfeed/:ind", async (req,res) => {
+    const {ind} = req.params;
+    try {
+        const count = await Post.count();
+        const posts = await Post.find({}, '_id imageName imageUrl author').populate('author', 'userimg').sort({ _id: -1 }).skip(ind*10).limit(10);
+        res.json({ status: "ok", posts, count });
+    }
+    catch (err) {
+        console.log("home err" + err);
         res.json({ status: "failed" });
     }
 })
